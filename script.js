@@ -17,38 +17,48 @@ var playerRollDice = function () {
     playerDiceArray.push(randomDiceRolls());
     counter += 1;
   }
-  return playerDiceArray[0], playerDiceArray[1];
+  return [playerDiceArray[0], playerDiceArray[1]];
 };
 
 // Global Variables
-var gameState = "diceRoll";
+var gameState = "diceRollState";
 var myOutputValue = "";
 var playerDiceArray = [];
+var currentPlayer = 1;
+
+var playerChooseDiceSequence = function (input) {
+  if (input == 1) {
+    var playerScore = Number(
+      String(playerDiceArray[0]) + String(playerDiceArray[1])
+    );
+    console.log(playerScore);
+    return `Your Score is ${playerScore}`;
+  } else if (input == 2) {
+    var playerScore = Number(
+      String(playerDiceArray[1]) + String(playerDiceArray[0])
+    );
+    console.log(playerScore);
+    return `Your Score is ${playerScore}`;
+  }
+};
 
 var main = function (input) {
-  if (gameState == "diceRoll") {
-    playerRollDice();
-    console.log(`game state is ${gameState}`);
-    console.log(playerDiceArray);
-    gameState = "chooseDiceSequence";
-    // GAME STATE CHANGED TO DICE SEQUENCE
-    return (
-      `Player 1 rolled ${playerDiceArray[0]} and ${playerDiceArray[1]}` +
-      `<br><br> Please choose the sequence of your number by inputing 1 or 2`
-    );
-  } else if (gameState === "chooseDiceSequence") {
-    if (input == 1) {
-      var playerScore = Number(
-        String(playerDiceArray[0]) + String(playerDiceArray[1])
-      );
-      console.log(playerScore); // Log playerScore
-      return `Your Score is ${playerScore}`;
-    } else if (input == 2) {
-      var playerScore = Number(
-        String(playerDiceArray[1]) + String(playerDiceArray[0])
-      );
-      console.log(playerScore); // Log playerScore
-      return `Your Score is ${playerScore}`;
+  while (counter <= 2)
+    if (gameState == "diceRollState") {
+      playerRollDice();
+      console.log(`game state is ${gameState}`);
+      console.log(playerDiceArray);
+      gameState = "chooseDiceSequenceState"; // GAME STATE CHANGED TO CHOOSE-DICE SEQUENCE
+      console.log(`game state is ${gameState}`);
+      myOutputValue =
+        `Player 1 rolled ${playerDiceArray[0]} and ${playerDiceArray[1]}` +
+        `<br><br> Player ${currentPlayer}, please choose the sequence of your number by inputting 1 or 2`;
+    } else if (gameState === "chooseDiceSequenceState") {
+      myOutputValue = playerChooseDiceSequence(input);
+      currentPlayer = currentPlayer === 1 ? 2 : 1;
+      gameState = "rollDiceState";
+      console.log(`current player is ${currentPlayer}`);
+      console.log(gameState);
     }
-  }
+  return myOutputValue;
 };
