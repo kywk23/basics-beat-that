@@ -14,51 +14,71 @@ var randomDiceRolls = function () {
 var playerRollDice = function () {
   var counter = 0;
   while (counter < 2) {
-    playerDiceArray.push(randomDiceRolls());
+    currentPlayerDiceArray.push(randomDiceRolls());
     counter += 1;
   }
-  return [playerDiceArray[0], playerDiceArray[1]];
+  return [currentPlayerDiceArray[0], currentPlayerDiceArray[1]];
 };
 
 // Global Variables
 var gameState = "diceRollState";
 var myOutputValue = "";
-var playerDiceArray = [];
-var currentPlayer = 1;
+var currentPlayerDiceArray = [];
+var currentPlayer = 0;
+var playerScoreArray = [0, 0];
 
 var playerChooseDiceSequence = function (input) {
   if (input == 1) {
     var playerScore = Number(
-      String(playerDiceArray[0]) + String(playerDiceArray[1])
+      String(currentPlayerDiceArray[0]) + String(currentPlayerDiceArray[1])
     );
     console.log(playerScore);
-    return `Your Score is ${playerScore}`;
   } else if (input == 2) {
     var playerScore = Number(
-      String(playerDiceArray[1]) + String(playerDiceArray[0])
+      String(currentPlayerDiceArray[1]) + String(currentPlayerDiceArray[0])
     );
     console.log(playerScore);
-    return `Your Score is ${playerScore}`;
+  }
+  playerScoreArray[currentPlayer] = playerScore;
+  if (currentPlayer == 1) {
+    var result = scoreComparison();
+    console.log(`result`, result);
+    return `Player 1 score is ${playerScoreArray[0]}, Player 2 score is ${playerScoreArray[1]}. <br> ${result}`;
+  }
+  return `Player ${currentPlayer + 1}, Your Score is ${playerScore}`;
+};
+
+var scoreComparison = function () {
+  if (playerScoreArray[0] > playerScoreArray[1]) {
+    console.log(playerScoreArray);
+    return `Player 1 wins`;
+  } else {
+    console.log(playerScoreArray);
+    return `Player 2 wins`;
   }
 };
 
 var main = function (input) {
-  while (counter <= 2)
-    if (gameState == "diceRollState") {
-      playerRollDice();
-      console.log(`game state is ${gameState}`);
-      console.log(playerDiceArray);
-      gameState = "chooseDiceSequenceState"; // GAME STATE CHANGED TO CHOOSE-DICE SEQUENCE
-      console.log(`game state is ${gameState}`);
-      myOutputValue =
-        `Player 1 rolled ${playerDiceArray[0]} and ${playerDiceArray[1]}` +
-        `<br><br> Player ${currentPlayer}, please choose the sequence of your number by inputting 1 or 2`;
-    } else if (gameState === "chooseDiceSequenceState") {
-      myOutputValue = playerChooseDiceSequence(input);
-      currentPlayer = currentPlayer === 1 ? 2 : 1;
-      gameState = "rollDiceState";
-      console.log(`current player is ${currentPlayer}`);
-      console.log(gameState);
-    }
+  if (gameState == "diceRollState") {
+    playerRollDice();
+    console.log(`game state is ${gameState}`);
+    console.log(`current player dice array`, currentPlayerDiceArray);
+    gameState = "chooseDiceSequenceState"; // GAME STATE CHANGED TO CHOOSE-DICE SEQUENCE
+    console.log(`game state is ${gameState}`);
+    myOutputValue =
+      `Player ${currentPlayer + 1} rolled ${currentPlayerDiceArray[0]} and ${
+        currentPlayerDiceArray[1]
+      }` +
+      `<br><br> Player ${
+        currentPlayer + 1
+      }, please choose the sequence of your number by inputting 1 or 2`;
+  } else if (gameState === "chooseDiceSequenceState") {
+    myOutputValue = playerChooseDiceSequence(input);
+    currentPlayer = currentPlayer === 1 ? 2 : 1;
+    gameState = "diceRollState";
+    currentPlayerDiceArray = []; //To reset my diceArray so that the loop happens
+    console.log(`current player is ${currentPlayer}`);
+    console.log(gameState);
+  }
   return myOutputValue;
 };
